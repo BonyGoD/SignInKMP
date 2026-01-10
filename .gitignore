@@ -48,6 +48,10 @@ kotlinTransformedMetadataLibraries/
 *.xcworkspace/xcuserdata/
 *.xcuserstate
 
+# Swift Package Manager
+.swiftpm/
+.build/
+
 # iOS App específico
 iosApp/Pods/
 iosApp/Podfile.lock

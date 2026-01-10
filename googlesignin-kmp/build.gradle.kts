@@ -167,4 +167,4 @@ afterEvaluate {
 
 // Información para publicación en JitPack
 group = "com.github.BonyGoD"
-version = "1.0.3-SNAPSHOT-13"
+version = "1.0.0"

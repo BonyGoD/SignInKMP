@@ -2,7 +2,7 @@
 
 [![JitPack](https://jitpack.io/v/BonyGoD/GoogleSignInKMP.svg)](https://jitpack.io/#BonyGoD/GoogleSignInKMP)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.1.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE)
 
 Librería Kotlin Multiplatform para integrar Google Sign-In con Firebase en aplicaciones Android e iOS.
 
@@ -49,7 +49,7 @@ En tu módulo `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.github.BonyGoD:GoogleSignInKMP:1.0.2")
+    implementation("com.github.BonyGoD.GoogleSignInKMP:googlesignin-kmp:TAG")
 }
 ```
 
@@ -61,23 +61,18 @@ dependencies {
 
 ### iOS
 
-#### Opción A: Swift Package desde GitHub (Recomendado)
+#### Swift Package desde GitHub
 
 1. En Xcode, abre tu proyecto
 2. **File → Add Package Dependencies...**
 3. En el campo de búsqueda, pega: `https://github.com/BonyGoD/GoogleSignInKMP`
-4. Selecciona **"GoogleSignInKMPSwift"** de la lista
-5. En **"Dependency Rule"**, selecciona **"Up to Next Major"** y versión `1.0.0`
-6. Click **"Add Package"**
+4. En **"Dependency Rule"**, selecciona **"Exact Version"** y escribe `1.0.0`
+5. Click **"Add Package"**
+6. Selecciona **"GoogleSignInKMPSwift"** de la lista de productos
 7. Selecciona tu target y click **"Add Package"**
 
-#### Opción B: Swift Package Local (Para desarrollo)
+> ⚠️ **Importante:** Debes usar **"Exact Version"** para que funcione correctamente. Las opciones "Up to Next Major" o "Up to Next Minor" pueden causar problemas de resolución de dependencias.
 
-1. En Xcode, abre tu proyecto
-2. **File → Add Package Dependencies → Add Local...**
-3. Navega a la carpeta clonada del repositorio
-4. Selecciona la carpeta **`GoogleSignInKMPSwift`**
-5. Click **"Add Package"**
 
 #### Configuración en tu iOSApp.swift:
 
@@ -105,7 +100,44 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 ## 💻 Uso
 
-### Básico (sin icono)
+### Ejemplo completo con personalización
+
+```kotlin
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import dev.bonygod.googlesignin.kmp.ui.GoogleSignin
+import org.jetbrains.compose.resources.painterResource
+
+@Composable
+fun LoginScreen() {
+    GoogleSignin(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp)
+            .border(1.dp, Color(0xFF000000), RoundedCornerShape(30.dp))
+            .clip(shape = RoundedCornerShape(30.dp))
+            .height(50.dp),
+        text = "Login with google",
+        textColor = Color.Black,
+        icon = painterResource(Res.drawable.google_icon),
+        onSuccess = { displayName, uid, email, photoUrl ->
+            // Handle successful sign-in
+        },
+        onError = { errorMessage ->
+            // Handle sign-in error
+        }
+    )
+}
+```
+
+### Ejemplo básico (sin personalización)
 
 ```kotlin
 import dev.bonygod.googlesignin.kmp.ui.GoogleSignin
@@ -125,34 +157,14 @@ fun LoginScreen() {
 }
 ```
 
-### Con icono de Google (personalizado)
+### Parámetros disponibles
 
-```kotlin
-import androidx.compose.material3.Icon
-import androidx.compose.ui.unit.dp
-import dev.bonygod.googlesignin.kmp.ui.GoogleSignin
-import org.jetbrains.compose.resources.painterResource
-
-@Composable
-fun LoginScreen() {
-    GoogleSignin(
-        onSuccess = { displayName, uid, email, photoUrl ->
-            println("Usuario autenticado: $displayName")
-        },
-        onError = { errorMessage ->
-            println("Error: $errorMessage")
-        },
-        leadingIcon = {
-            Icon(
-                painter = painterResource(Res.drawable.google_icon),
-                contentDescription = "Google",
-                modifier = Modifier.size(24.dp),
-                tint = Color.Unspecified
-            )
-        }
-    )
-}
-```
+- **`modifier`**: `Modifier = Modifier` - Control completo sobre el estilo del botón
+- **`text`**: `String = "Log in with Google"` - Texto del botón
+- **`textColor`**: `Color = Color.White` - Color del texto
+- **`icon`**: `Painter? = null` - Icono opcional (se muestra a la izquierda del texto)
+- **`onSuccess`**: Callback cuando el login es exitoso con datos del usuario
+- **`onError`**: Callback cuando ocurre un error
 
 > **Nota:** El icono de Google no está incluido en la librería. Puedes descargarlo desde [Google Brand Resources](https://developers.google.com/identity/branding-guidelines) y agregarlo a tus recursos de Compose (`composeResources/drawable/`).
 
@@ -192,11 +204,48 @@ GoogleSignInKMPSwift/       # Swift Package para iOS
         └── GoogleUserData.swift
 ```
 
+## 🤝 Contribuciones
+
+¡Las contribuciones son bienvenidas! Si deseas contribuir al proyecto:
+
+### Reportar Bugs o Sugerir Mejoras
+1. Abre un **[Issue](https://github.com/BonyGoD/GoogleSignInKMP/issues)** describiendo el problema o la mejora
+
+### Contribuir con Código
+1. Haz un **Fork** del repositorio
+2. Crea una **rama** con tu feature: `git checkout -b feature/AmazingFeature`
+3. **Commit** tus cambios: `git commit -m 'Add some AmazingFeature'`
+4. **Push** a la rama: `git push origin feature/AmazingFeature`
+5. Abre un **Pull Request** utilizando la plantilla [PULL_REQUEST_TEMPLATE.md](.github/PULL_REQUEST_TEMPLATE.md)
+
+**📋 Importante al crear tu PR:**
+- ✅ Completa **todas las secciones** de la plantilla
+- ✅ Marca los **checkboxes** aplicables
+- ✅ Acepta los **términos de contribución** (cesión de derechos al propietario)
+- ✅ Describe claramente los **cambios realizados**
+- ✅ Incluye **screenshots** si hay cambios visuales
+- ✅ Indica las **plataformas probadas** (Android/iOS)
+
+> Al enviar un Pull Request, aceptas ceder todos los derechos de propiedad intelectual de tu contribución al propietario del repositorio. Consulta la [licencia](LICENSE.md) para más detalles.
+
 ## 📄 Licencia
 
-MIT License
+**Licencia de Uso Restringido** - Copyright © 2026 Ivan Boniquet Rodriguez
+
+Esta librería es de código cerrado. Puedes **usar** la librería en tus proyectos, pero **NO puedes**:
+- Copiar el código fuente
+- Modificar el código fuente
+- Redistribuir la librería
+- Crear trabajos derivados
+
+Para más detalles, consulta el archivo [LICENSE.md](LICENSE.md).
+
+Para permisos especiales o licencias comerciales, contacta: **bonygod.dev@gmail.com**
 
 ## 👤 Autor
 
-Ivan Boniquet Rodriguez (@BonyGoD)
+**Ivan Boniquet Rodriguez** ([@BonyGoD](https://github.com/BonyGoD))
 
+---
+
+⭐ Si esta librería te ha sido útil, considera darle una estrella en GitHub!
