@@ -1,8 +1,8 @@
 //
-//  GoogleAuthCallbackHelper.swift
-//  GoogleSignInKMPSwift
+//  SignInCallbackHelper.swift
+//  SignInKMPSwift
 //
-//  Helper que coordina Google Sign-In entre Kotlin y Swift usando NSNotificationCenter
+//  Helper generico que coordina la autenticacion social (Google, Apple, etc.) entre Kotlin y Swift usando NSNotificationCenter
 //
 //  Created by Ivan Boniquet Rodriguez on 4/1/26.
 //  Copyright © 2026 BonyGoD. All rights reserved.
@@ -10,9 +10,11 @@
 import Foundation
 import UIKit
 
-public class GoogleAuthCallbackHelper {
+/// Coordinador central para manejar las solicitudes de autenticacion desde Kotlin
+/// Soporta multiples proveedores: Google, Apple, etc.
+public class SignInCallbackHelper {
 
-    public static let shared = GoogleAuthCallbackHelper()
+    public static let shared = SignInCallbackHelper()
 
     private init() {
         setupNotificationObserver()
@@ -72,6 +74,7 @@ public class GoogleAuthCallbackHelper {
         NotificationCenter.default.removeObserver(self)
     }
 }
+
 
 
 

@@ -1,4 +1,4 @@
-package dev.bonygod.googlesignin.kmp.ui.components
+package dev.bonygod.signin.kmp.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.bonygod.googlesignin.kmp.core.GoogleAuthHelper
+import dev.bonygod.signin.kmp.core.GoogleAuthHelper
 import kotlinx.coroutines.launch
 
 @Composable

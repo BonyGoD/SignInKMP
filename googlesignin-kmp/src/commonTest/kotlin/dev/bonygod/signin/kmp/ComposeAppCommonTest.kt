@@ -1,4 +1,4 @@
-package dev.bonygod.googlesignin.kmp
+package dev.bonygod.signin.kmp
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

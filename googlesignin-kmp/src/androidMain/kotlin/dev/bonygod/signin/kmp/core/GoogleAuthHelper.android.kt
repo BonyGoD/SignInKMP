@@ -1,4 +1,4 @@
-package dev.bonygod.googlesignin.kmp.core
+package dev.bonygod.signin.kmp.core
 
 import android.content.Context
 import androidx.credentials.CredentialManager

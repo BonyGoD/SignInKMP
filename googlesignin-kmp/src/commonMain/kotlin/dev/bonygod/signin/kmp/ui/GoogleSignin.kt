@@ -1,4 +1,4 @@
-package dev.bonygod.googlesignin.kmp.ui
+package dev.bonygod.signin.kmp.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

@@ -1,6 +1,6 @@
 //
 //  GoogleSignInBridge.swift
-//  iosApp
+//  SignInKMPSwift
 //
 //  Created by Ivan Boniquet Rodriguez on 4/1/26.
 //  Copyright © 2026 BonyGoD. All rights reserved.

@@ -1,11 +1,11 @@
-package dev.bonygod.googlesignin.kmp.ui
+package dev.bonygod.signin.kmp.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import dev.bonygod.googlesignin.kmp.core.GoogleAuthHelper
-import dev.bonygod.googlesignin.kmp.ui.components.GoogleButton
+import dev.bonygod.signin.kmp.core.GoogleAuthHelper
+import dev.bonygod.signin.kmp.ui.components.GoogleButton
 
 @Composable
 actual fun GoogleSignin(

@@ -1,4 +1,4 @@
-package dev.bonygod.googlesignin.kmp.core
+package dev.bonygod.signin.kmp.core
 
 import kotlinx.coroutines.suspendCancellableCoroutine
 import platform.Foundation.NSNotificationCenter

@@ -128,7 +128,7 @@ android {
 }
 
 buildConfig {
-    packageName("dev.bonygod.googlesignin.kmp")
+    packageName("dev.bonygod.signin.kmp")
 
     val properties = Properties()
     val localPropertiesFile = project.rootProject.file("local.properties")
