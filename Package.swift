@@ -4,14 +4,14 @@
 import PackageDescription
 
 let package = Package(
-    name: "GoogleSignInKMPSwift",
+    name: "SignInKMPSwift",
     platforms: [
         .iOS(.v15)
     ],
     products: [
         .library(
-            name: "GoogleSignInKMPSwift",
-            targets: ["GoogleSignInKMPSwift"]
+            name: "SignInKMPSwift",
+            targets: ["SignInKMPSwift"]
         ),
     ],
     dependencies: [
@@ -20,13 +20,13 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "GoogleSignInKMPSwift",
+            name: "SignInKMPSwift",
             dependencies: [
                 .product(name: "FirebaseCore", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseAuth", package: "firebase-ios-sdk"),
                 .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")
             ],
-            path: "GoogleSignInKMPSwift/Sources/GoogleSignInKMPSwift"
+            path: "SignInKMPSwift/Sources/SignInKMPSwift"
         )
     ]
 )

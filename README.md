@@ -79,13 +79,13 @@ dependencies {
 ```swift
 import FirebaseCore
 import GoogleSignIn
-import GoogleSignInKMPSwift
+import SignInKMPSwift
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         FirebaseApp.configure()
-        _ = GoogleAuthCallbackHelper.shared
+        _ = SignInCallbackHelper.shared
         return true
     }
 
@@ -175,31 +175,33 @@ fun LoginScreen() {
 
 ### iOS
 - Comunicación entre Kotlin y Swift mediante `NSNotificationCenter`
-- Swift Package con helpers para Google Sign-In
+- Swift Package (`SignInKMPSwift`) que actúa como bridge para múltiples proveedores de autenticación
 
 ### Flujo
 
 ```
 Usuario → GoogleSignin() composable → GoogleAuthHelper
          ↓
-   Android: API nativa directa
-   iOS: NSNotificationCenter → Swift → Google Sign-In → Firebase Auth
+   Android: API nativa directa con Firebase
+   iOS: NSNotificationCenter → SignInKMPSwift Bridge → Proveedor (Google/Apple) → Firebase Auth
          ↓
    Callback onSuccess() con datos del usuario
 ```
 
+> **Arquitectura escalable:** El bridge `SignInKMPSwift` está diseñado para soportar múltiples proveedores (Google, Apple, etc.) usando el mismo patrón de comunicación.
+
 ## 📁 Estructura del Proyecto
 
 ```
-googlesignin-kmp/           # Librería Kotlin Multiplatform
+signin-kmp/                 # Librería Kotlin Multiplatform
 ├── androidMain/            # Implementación Android
 ├── iosMain/                # Implementación iOS (Kotlin)
 └── commonMain/             # Código común
 
-GoogleSignInKMPSwift/       # Swift Package para iOS
+SignInKMPSwift/             # Swift Package para iOS
 └── Sources/
-    └── GoogleSignInKMPSwift/
-        ├── GoogleAuthCallbackHelper.swift
+    └── SignInKMPSwift/
+        ├── SignInCallbackHelper.swift
         ├── GoogleSignInBridge.swift
         └── GoogleUserData.swift
 ```
@@ -209,7 +211,7 @@ GoogleSignInKMPSwift/       # Swift Package para iOS
 ¡Las contribuciones son bienvenidas! Si deseas contribuir al proyecto:
 
 ### Reportar Bugs o Sugerir Mejoras
-1. Abre un **[Issue](https://github.com/BonyGoD/GoogleSignInKMP/issues)** describiendo el problema o la mejora
+1. Abre un **[Issue](https://github.com/BonyGoD/SignInKMP/issues)** describiendo el problema o la mejora
 
 ### Contribuir con Código
 1. Haz un **Fork** del repositorio

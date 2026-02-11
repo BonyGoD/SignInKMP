@@ -1,4 +1,4 @@
-# Licencia Propietaria - GoogleSignInKMP
+# Licencia Propietaria - SignInKMP
 
 Copyright (c) 2026 BonyGoD. Todos los derechos reservados.
 
@@ -6,7 +6,7 @@ Copyright (c) 2026 BonyGoD. Todos los derechos reservados.
 
 ### 1. CONCESIÓN DE LICENCIA
 
-Esta biblioteca de software ("GoogleSignInKMP") se proporciona bajo los siguientes términos:
+Esta biblioteca de software ("SignInKMP") se proporciona bajo los siguientes términos:
 
 **PERMITIDO:**
 - ✅ Usar la biblioteca en proyectos personales y comerciales

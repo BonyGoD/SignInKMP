@@ -1,4 +1,4 @@
-rootProject.name = "GoogleSigninKMP"
+rootProject.name = "SignInKMP"
 // enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS") // Deshabilitado para permitir renombrar módulo
 
 pluginManagement {
@@ -28,4 +28,4 @@ dependencyResolutionManagement {
     }
 }
 
-include(":googlesignin-kmp")
+include(":signin-kmp")
