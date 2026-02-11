@@ -28,4 +28,4 @@ dependencyResolutionManagement {
     }
 }
 
-include(":googlesignin-kmp")
+include(":signin-kmp")

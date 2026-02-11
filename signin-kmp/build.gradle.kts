@@ -152,7 +152,7 @@ dependencies {
 // ---------------------------------------------------
 afterEvaluate {
     val commonJar by tasks.registering(Jar::class) {
-        archiveBaseName.set("googlesignin-kmp-common")
+        archiveBaseName.set("signin-kmp-common")
         archiveClassifier.set("common")
         from(kotlin.sourceSets["commonMain"].kotlin.srcDirs)
         from(kotlin.sourceSets["commonMain"].resources.srcDirs)

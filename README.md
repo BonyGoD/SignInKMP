@@ -193,7 +193,7 @@ Usuario → GoogleSignin() composable → GoogleAuthHelper
 ## 📁 Estructura del Proyecto
 
 ```
-googlesignin-kmp/           # Librería Kotlin Multiplatform
+signin-kmp/                 # Librería Kotlin Multiplatform
 ├── androidMain/            # Implementación Android
 ├── iosMain/                # Implementación iOS (Kotlin)
 └── commonMain/             # Código común
