@@ -89,3 +89,7 @@ iosApp/fastlane/test_output/
 iosApp/.DS_Store
 iosApp/**/.DS_Store
 project.pbxproj
+
+# Gradle wrapper scripts
+gradlew
+gradlew.bat
