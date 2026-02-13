@@ -3,6 +3,7 @@ package dev.bonygod.signin.kmp.ui.components
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -53,24 +54,25 @@ fun GoogleButton(
         Box(modifier = Modifier.fillMaxWidth()) {
             icon?.let {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.align(Alignment.CenterStart)
+                    modifier = Modifier.align(Alignment.Center),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         painter = it,
                         contentDescription = null,
                         tint = Color.Unspecified,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Text(
+                        modifier = Modifier
+                            .padding(start = 10.dp),
+                        text = text,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 16.sp,
+                        color = textColor,
                     )
                 }
             }
-            Text(
-                text,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                color = textColor,
-                modifier = Modifier.align(Alignment.Center)
-            )
         }
     }
 }

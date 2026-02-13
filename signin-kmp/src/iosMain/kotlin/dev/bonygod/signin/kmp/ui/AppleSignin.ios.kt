@@ -12,6 +12,8 @@ actual fun AppleSignin(
     modifier: Modifier,
     text: String,
     textColor: Color,
+    containerColor: Color,
+    contentColor: Color,
     icon: Painter?,
     onSuccess: (displayName: String, uid: String, email: String, photoUrl: String) -> Unit,
     onError: (errorMessage: String) -> Unit
@@ -23,9 +25,10 @@ actual fun AppleSignin(
         modifier = modifier,
         text = text,
         textColor = textColor,
+        containerColor = containerColor,
+        contentColor = contentColor,
         icon = icon,
         onSuccess = onSuccess,
         onError = onError
     )
 }
-
