@@ -18,16 +18,18 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.bonygod.signin.kmp.core.GoogleAuthHelper
+import dev.bonygod.signin.kmp.core.AppleAuthHelper
 import kotlinx.coroutines.launch
 
 @Composable
-fun GoogleButton(
-    googleAuthHelper: GoogleAuthHelper,
-    modifier: Modifier,
-    text: String,
-    textColor: Color ,
-    icon: Painter?,
+fun AppleButton(
+    appleAuthHelper: AppleAuthHelper,
+    modifier: Modifier = Modifier,
+    text: String = "Sign in with Apple",
+    textColor: Color = Color.White,
+    containerColor: Color = Color.Black,
+    contentColor: Color = Color.White,
+    icon: Painter? = null,
     onSuccess: (displayName: String, uid: String, email: String, photoUrl: String) -> Unit,
     onError: (errorMessage: String) -> Unit
 ) {
@@ -38,7 +40,7 @@ fun GoogleButton(
         modifier = modifier,
         onClick = {
             scope.launch {
-                googleAuthHelper.signInWithGoogle(
+                appleAuthHelper.signInWithApple(
                     onSuccess = { displayName, uid, email, photoUrl ->
                         onSuccess(displayName, uid, email, photoUrl)
                     },
@@ -48,7 +50,8 @@ fun GoogleButton(
             }
         },
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent
+            containerColor = containerColor,
+            contentColor = contentColor
         )
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
@@ -59,20 +62,42 @@ fun GoogleButton(
                 ) {
                     Icon(
                         painter = it,
-                        contentDescription = null,
+                        contentDescription = "Apple logo",
                         tint = Color.Unspecified,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(18.dp).alignByBaseline()
                     )
                     Text(
                         modifier = Modifier
-                            .padding(start = 10.dp),
+                            .padding(start = 10.dp)
+                            .alignByBaseline(),
                         text = text,
                         fontWeight = FontWeight.Normal,
                         fontSize = 16.sp,
                         color = textColor,
                     )
                 }
+            } ?: run {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = text,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 16.sp,
+                    color = textColor,
+                )
             }
         }
     }
 }
+
+//@Preview(showBackground = true)
+//@Composable
+//fun AppleButtonPreview() {
+//    AppleButton(
+//        modifier = Modifier.padding(16.dp),
+//        text = "Sign in with Apple",
+//        textColor = Color.White,
+//        icon = painterResource(Res.drawable.applelogo),
+//        onSuccess = { _, _, _, _ -> },
+//        onError = { }
+//    )
+//}

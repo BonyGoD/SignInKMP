@@ -1,21 +1,60 @@
-# Google Sign-In KMP
+# Social Sign-In KMP (Google & Apple)
 
-[![JitPack](https://jitpack.io/v/BonyGoD/GoogleSignInKMP.svg)](https://jitpack.io/#BonyGoD/GoogleSignInKMP)
+[![JitPack](https://jitpack.io/v/BonyGoD/SignInKMP.svg)](https://jitpack.io/#BonyGoD/SignInKMP)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.1.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
 [![License](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE)
 
-Librería Kotlin Multiplatform para integrar Google Sign-In con Firebase en aplicaciones Android e iOS.
+Librería Kotlin Multiplatform para integrar Google Sign-In y Apple Sign-In con Firebase en aplicaciones Android e iOS.
 
 ## 📦 Características
 
 - ✅ Google Sign-In con Firebase Auth
+- ✅ Apple Sign-In con Firebase Auth
 - ✅ Soporte para Android e iOS
 - ✅ API común en Kotlin Multiplatform
-- ✅ Componente Compose Multiplatform incluido
+- ✅ Componentes Compose Multiplatform incluidos
 
 ## 🚀 Instalación
 
-### Usando JitPack
+### Opción 1: Usando Maven Local (Desarrollo)
+
+Para desarrollo local, publica la librería en tu Maven Local:
+
+```bash
+./gradlew publishToMavenLocal
+```
+
+Luego configura tu proyecto:
+
+#### 1. Agrega el repositorio Maven Local
+
+En tu `settings.gradle.kts`:
+
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        mavenLocal()  // ← Agrega esto primero
+        google()
+        mavenCentral()
+    }
+}
+```
+
+#### 2. Agrega la dependencia
+
+En tu módulo `build.gradle.kts`:
+
+```kotlin
+dependencies {
+    implementation("com.github.BonyGoD:signin-kmp:2.0.0")
+}
+```
+
+> **Nota:** Cada vez que hagas cambios en la librería, ejecuta `./gradlew publishToMavenLocal` para actualizar la versión local.
+> 
+> 📖 **[Ver guía completa de desarrollo local →](LOCAL_DEVELOPMENT.md)**
+
+### Opción 2: Usando JitPack (Producción)
 
 #### 1. Agrega el repositorio JitPack
 
@@ -49,7 +88,7 @@ En tu módulo `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.github.BonyGoD.GoogleSignInKMP:googlesignin-kmp:TAG")
+    implementation("com.github.BonyGoD:SignInKMP:TAG")
 }
 ```
 
@@ -65,10 +104,10 @@ dependencies {
 
 1. En Xcode, abre tu proyecto
 2. **File → Add Package Dependencies...**
-3. En el campo de búsqueda, pega: `https://github.com/BonyGoD/GoogleSignInKMP`
-4. En **"Dependency Rule"**, selecciona **"Exact Version"** y escribe `1.0.0`
+3. En el campo de búsqueda, pega: `https://github.com/BonyGoD/SignInKMP`
+4. En **"Dependency Rule"**, selecciona **"Exact Version"** y escribe `2.0.0`
 5. Click **"Add Package"**
-6. Selecciona **"GoogleSignInKMPSwift"** de la lista de productos
+6. Selecciona **"SignInKMPSwift"** de la lista de productos
 7. Selecciona tu target y click **"Add Package"**
 
 > ⚠️ **Importante:** Debes usar **"Exact Version"** para que funcione correctamente. Las opciones "Up to Next Major" o "Up to Next Minor" pueden causar problemas de resolución de dependencias.
@@ -100,7 +139,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 ## 💻 Uso
 
-### Ejemplo completo con personalización
+### Google Sign-In
+
+#### Ejemplo completo con personalización
 
 ```kotlin
 import androidx.compose.foundation.border
@@ -137,7 +178,7 @@ fun LoginScreen() {
 }
 ```
 
-### Ejemplo básico (sin personalización)
+#### Ejemplo básico (sin personalización)
 
 ```kotlin
 import dev.bonygod.googlesignin.kmp.ui.GoogleSignin
@@ -157,21 +198,84 @@ fun LoginScreen() {
 }
 ```
 
-### Parámetros disponibles
+### Apple Sign-In
+
+#### Ejemplo completo con personalización
+
+```kotlin
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import dev.bonygod.signin.kmp.ui.AppleSignin
+import org.jetbrains.compose.resources.painterResource
+
+@Composable
+fun LoginScreen() {
+    AppleSignin(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp)
+            .border(1.dp, Color(0xFF000000), RoundedCornerShape(30.dp))
+            .clip(shape = RoundedCornerShape(30.dp))
+            .height(50.dp),
+        text = "Sign in with Apple",
+        textColor = Color.White,
+        icon = painterResource(Res.drawable.apple_icon),
+        onSuccess = { displayName, uid, email, photoUrl ->
+            // Handle successful sign-in
+        },
+        onError = { errorMessage ->
+            // Handle sign-in error
+        }
+    )
+}
+```
+
+#### Ejemplo básico (sin personalización)
+
+```kotlin
+import dev.bonygod.signin.kmp.ui.AppleSignin
+
+@Composable
+fun LoginScreen() {
+    AppleSignin(
+        onSuccess = { displayName, uid, email, photoUrl ->
+            println("Usuario autenticado: $displayName")
+            // Maneja el inicio de sesión exitoso
+        },
+        onError = { errorMessage ->
+            println("Error: $errorMessage")
+            // Maneja el error
+        }
+    )
+}
+```
+
+### Parámetros disponibles (ambos componentes)
 
 - **`modifier`**: `Modifier = Modifier` - Control completo sobre el estilo del botón
-- **`text`**: `String = "Log in with Google"` - Texto del botón
-- **`textColor`**: `Color = Color.White` - Color del texto
+- **`text`**: `String` - Texto del botón (por defecto: "Log in with Google" / "Sign in with Apple")
+- **`textColor`**: `Color = Color.Black` - Color del texto
 - **`icon`**: `Painter? = null` - Icono opcional (se muestra a la izquierda del texto)
 - **`onSuccess`**: Callback cuando el login es exitoso con datos del usuario
 - **`onError`**: Callback cuando ocurre un error
 
-> **Nota:** El icono de Google no está incluido en la librería. Puedes descargarlo desde [Google Brand Resources](https://developers.google.com/identity/branding-guidelines) y agregarlo a tus recursos de Compose (`composeResources/drawable/`).
+> **Nota:** Los iconos de Google y Apple no están incluidos en la librería. Puedes descargarlos desde:
+> - Google: [Google Brand Resources](https://developers.google.com/identity/branding-guidelines)
+> - Apple: [Apple Design Resources](https://developer.apple.com/design/resources/)
+> 
+> Agrégalos a tus recursos de Compose (`composeResources/drawable/`).
 
 ## 🏗️ Arquitectura
 
 ### Android
-- Usa directamente las APIs de Google Sign-In y Firebase Auth
+- Usa directamente las APIs de Google Sign-In, Apple Sign-In (via Firebase OAuthProvider) y Firebase Auth
 
 ### iOS
 - Comunicación entre Kotlin y Swift mediante `NSNotificationCenter`
@@ -180,7 +284,7 @@ fun LoginScreen() {
 ### Flujo
 
 ```
-Usuario → GoogleSignin() composable → GoogleAuthHelper
+Usuario → GoogleSignin() / AppleSignin() composable → GoogleAuthHelper / AppleAuthHelper
          ↓
    Android: API nativa directa con Firebase
    iOS: NSNotificationCenter → SignInKMPSwift Bridge → Proveedor (Google/Apple) → Firebase Auth
@@ -195,15 +299,25 @@ Usuario → GoogleSignin() composable → GoogleAuthHelper
 ```
 signin-kmp/                 # Librería Kotlin Multiplatform
 ├── androidMain/            # Implementación Android
+│   ├── GoogleAuthHelper.android.kt
+│   └── AppleAuthHelper.android.kt
 ├── iosMain/                # Implementación iOS (Kotlin)
+│   ├── GoogleAuthHelper.ios.kt
+│   └── AppleAuthHelper.ios.kt
 └── commonMain/             # Código común
+    ├── GoogleAuthHelper.kt
+    ├── AppleAuthHelper.kt
+    ├── GoogleButton.kt
+    └── AppleButton.kt
 
 SignInKMPSwift/             # Swift Package para iOS
 └── Sources/
     └── SignInKMPSwift/
         ├── SignInCallbackHelper.swift
         ├── GoogleSignInBridge.swift
-        └── GoogleUserData.swift
+        ├── GoogleUserData.swift
+        ├── AppleSignInBridge.swift
+        └── AppleUserData.swift
 ```
 
 ## 🤝 Contribuciones
