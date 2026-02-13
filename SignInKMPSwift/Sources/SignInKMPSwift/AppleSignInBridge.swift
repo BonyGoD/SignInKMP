@@ -16,6 +16,8 @@ import FirebaseAuth
 
     private static var currentNonce: String?
     private static var completionHandler: ((AppleUserData?, NSError?) -> Void)?
+    private static var currentDelegate: AppleSignInDelegate?
+    private static var currentAuthController: ASAuthorizationController?
 
     /// Inicia el proceso de autenticación con Apple
     /// - Parameters:
@@ -37,24 +39,38 @@ import FirebaseAuth
 
         let authorizationController = ASAuthorizationController(authorizationRequests: [request])
         let delegate = AppleSignInDelegate()
+        currentDelegate = delegate  // ⚠️ IMPORTANTE: Mantener referencia fuerte
+        currentAuthController = authorizationController  // ⚠️ IMPORTANTE: Mantener referencia fuerte
         authorizationController.delegate = delegate
         authorizationController.presentationContextProvider = delegate
         authorizationController.performRequests()
     }
 
     fileprivate static func handleAppleSignIn(authorization: ASAuthorization) {
-        guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential,
-              let nonce = currentNonce,
-              let appleIDToken = appleIDCredential.identityToken,
-              let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+        guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential else {
             completionHandler?(nil, NSError(domain: "Invalid Apple Credential", code: -1))
             return
         }
 
-        let credential = OAuthProvider.credential(
-            withProviderID: "apple.com",
-            idToken: idTokenString,
-            rawNonce: nonce
+        guard let nonce = currentNonce else {
+            completionHandler?(nil, NSError(domain: "Invalid Apple Credential", code: -1))
+            return
+        }
+
+        guard let appleIDToken = appleIDCredential.identityToken else {
+            completionHandler?(nil, NSError(domain: "Invalid Apple Credential", code: -1))
+            return
+        }
+
+        guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+            completionHandler?(nil, NSError(domain: "Invalid Apple Credential", code: -1))
+            return
+        }
+
+        let credential = OAuthProvider.appleCredential(
+            withIDToken: idTokenString,
+            rawNonce: nonce,
+            fullName: appleIDCredential.fullName
         )
 
         Auth.auth().signIn(with: credential) { authResult, error in
@@ -85,11 +101,15 @@ import FirebaseAuth
             )
 
             completionHandler?(userData, nil)
+            currentDelegate = nil  // Limpiar delegate
+            currentAuthController = nil  // Limpiar controller
         }
     }
 
     fileprivate static func handleError(_ error: Error) {
         completionHandler?(nil, error as NSError)
+        currentDelegate = nil  // Limpiar delegate
+        currentAuthController = nil  // Limpiar controller
     }
 
     // MARK: - Helper Functions
@@ -132,7 +152,6 @@ import FirebaseAuth
         let hashString = hashedData.compactMap {
             String(format: "%02x", $0)
         }.joined()
-
         return hashString
     }
 }
@@ -160,9 +179,4 @@ private class AppleSignInDelegate: NSObject, ASAuthorizationControllerDelegate, 
 
 import CryptoKit
 
-extension SHA256 {
-    static func hash(data: Data) -> SHA256.Digest {
-        return SHA256.hash(data: data)
-    }
-}
 

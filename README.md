@@ -1,6 +1,6 @@
 # Social Sign-In KMP (Google & Apple)
 
-[![JitPack](https://jitpack.io/v/BonyGoD/GoogleSignInKMP.svg)](https://jitpack.io/#BonyGoD/GoogleSignInKMP)
+[![JitPack](https://jitpack.io/v/BonyGoD/SignInKMP.svg)](https://jitpack.io/#BonyGoD/SignInKMP)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.1.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
 [![License](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE)
 
@@ -16,7 +16,45 @@ Librería Kotlin Multiplatform para integrar Google Sign-In y Apple Sign-In con 
 
 ## 🚀 Instalación
 
-### Usando JitPack
+### Opción 1: Usando Maven Local (Desarrollo)
+
+Para desarrollo local, publica la librería en tu Maven Local:
+
+```bash
+./gradlew publishToMavenLocal
+```
+
+Luego configura tu proyecto:
+
+#### 1. Agrega el repositorio Maven Local
+
+En tu `settings.gradle.kts`:
+
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        mavenLocal()  // ← Agrega esto primero
+        google()
+        mavenCentral()
+    }
+}
+```
+
+#### 2. Agrega la dependencia
+
+En tu módulo `build.gradle.kts`:
+
+```kotlin
+dependencies {
+    implementation("com.github.BonyGoD:signin-kmp:2.0.0")
+}
+```
+
+> **Nota:** Cada vez que hagas cambios en la librería, ejecuta `./gradlew publishToMavenLocal` para actualizar la versión local.
+> 
+> 📖 **[Ver guía completa de desarrollo local →](LOCAL_DEVELOPMENT.md)**
+
+### Opción 2: Usando JitPack (Producción)
 
 #### 1. Agrega el repositorio JitPack
 
@@ -50,7 +88,7 @@ En tu módulo `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.github.BonyGoD.GoogleSignInKMP:googlesignin-kmp:TAG")
+    implementation("com.github.BonyGoD:SignInKMP:TAG")
 }
 ```
 
@@ -66,10 +104,10 @@ dependencies {
 
 1. En Xcode, abre tu proyecto
 2. **File → Add Package Dependencies...**
-3. En el campo de búsqueda, pega: `https://github.com/BonyGoD/GoogleSignInKMP`
-4. En **"Dependency Rule"**, selecciona **"Exact Version"** y escribe `1.0.0`
+3. En el campo de búsqueda, pega: `https://github.com/BonyGoD/SignInKMP`
+4. En **"Dependency Rule"**, selecciona **"Exact Version"** y escribe `2.0.0`
 5. Click **"Add Package"**
-6. Selecciona **"GoogleSignInKMPSwift"** de la lista de productos
+6. Selecciona **"SignInKMPSwift"** de la lista de productos
 7. Selecciona tu target y click **"Add Package"**
 
 > ⚠️ **Importante:** Debes usar **"Exact Version"** para que funcione correctamente. Las opciones "Up to Next Major" o "Up to Next Minor" pueden causar problemas de resolución de dependencias.
