@@ -1,8 +1,8 @@
 //
-//  GoogleAuthCallbackHelper.swift
+//  SignInCallbackHelper.swift
 //  iosApp
 //
-//  Helper para conectar GoogleSignInBridge con el código Kotlin
+//  Helper para conectar GoogleSignInBridge y AppleSignInBridge con el código Kotlin
 //
 //  Created by Ivan Boniquet Rodriguez on 4/1/26.
 //  Copyright © 2026 BonyGoD. All rights reserved.
@@ -11,48 +11,106 @@ import Foundation
 import UIKit
 import ComposeApp
 
-/// Servicio que coordina la comunicación entre Kotlin y GoogleSignInBridge
-/// Escucha notificaciones de Kotlin y gestiona el flujo de autenticación
-public class GoogleAuthCallbackHelper {
+/// Servicio que coordina la comunicación entre Kotlin y los bridges de autenticación
+/// Escucha notificaciones de Kotlin y gestiona el flujo de autenticación para Google y Apple
+public class SignInCallbackHelper {
 
-    public static let shared = GoogleAuthCallbackHelper()
+    public static let shared = SignInCallbackHelper()
 
     private init() {
-        // Escuchar la notificación de Kotlin
+        setupNotificationObservers()
+    }
+
+    private func setupNotificationObservers() {
+        // Escuchar la notificación de Google Sign-In desde Kotlin
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(handleSignInRequest),
+            selector: #selector(handleGoogleSignInRequest),
             name: NSNotification.Name("GoogleSignInRequested"),
+            object: nil
+        )
+
+        // Escuchar la notificación de Apple Sign-In desde Kotlin
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAppleSignInRequest),
+            name: NSNotification.Name("AppleSignInRequested"),
             object: nil
         )
     }
 
-    @objc private func handleSignInRequest() {
-        // Obtener el root view controller
+    @objc private func handleGoogleSignInRequest() {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let rootVC = windowScene.windows.first?.rootViewController else {
-            // Llamar al callback de error en Kotlin
-            GoogleSignInCallback.shared.onSignInError(error: "No se pudo obtener el view controller")
+            notifyKotlinError(provider: "Google", error: "No se pudo obtener el view controller")
             return
         }
 
-        // Llamar a GoogleSignInBridge
-        GoogleSignInBridge.signIn(presentingViewController: rootVC) { userData, error in
+        GoogleSignInBridge.signIn(presentingViewController: rootVC) { [weak self] userData, error in
             if let error = error {
-                // Notificar error a Kotlin
-                GoogleSignInCallback.shared.onSignInError(error: error.localizedDescription)
+                self?.notifyKotlinError(provider: "Google", error: error.localizedDescription)
             } else if let userData = userData {
-                // Notificar éxito a Kotlin con todos los datos
-                GoogleSignInCallback.shared.onSignInSuccessWithUserData(
-                    displayName: userData.displayName,
-                    uid: userData.uid,
-                    email: userData.email,
-                    photoURL: userData.photoURL
-                )
+                self?.notifyKotlinGoogleSuccess(userData: userData)
             } else {
-                GoogleSignInCallback.shared.onSignInError(error: "Unknown error")
+                self?.notifyKotlinError(provider: "Google", error: "Unknown error")
             }
         }
+    }
+
+    @objc private func handleAppleSignInRequest() {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootVC = windowScene.windows.first?.rootViewController else {
+            notifyKotlinError(provider: "Apple", error: "No se pudo obtener el view controller")
+            return
+        }
+
+        AppleSignInBridge.signIn(presentingViewController: rootVC) { [weak self] userData, error in
+            if let error = error {
+                self?.notifyKotlinError(provider: "Apple", error: error.localizedDescription)
+            } else if let userData = userData {
+                self?.notifyKotlinAppleSuccess(userData: userData)
+            } else {
+                self?.notifyKotlinError(provider: "Apple", error: "Unknown error")
+            }
+        }
+    }
+
+    private func notifyKotlinError(provider: String, error: String) {
+        NotificationCenter.default.post(
+            name: NSNotification.Name("\(provider)SignInError"),
+            object: nil,
+            userInfo: ["error": error]
+        )
+    }
+
+    private func notifyKotlinGoogleSuccess(userData: GoogleUserData) {
+        let userInfo: [String: Any] = [
+            "displayName": userData.displayName,
+            "uid": userData.uid,
+            "email": userData.email,
+            "photoURL": userData.photoURL
+        ]
+
+        NotificationCenter.default.post(
+            name: NSNotification.Name("GoogleSignInSuccess"),
+            object: nil,
+            userInfo: userInfo
+        )
+    }
+
+    private func notifyKotlinAppleSuccess(userData: AppleUserData) {
+        let userInfo: [String: Any] = [
+            "displayName": userData.displayName,
+            "uid": userData.uid,
+            "email": userData.email,
+            "photoURL": userData.photoURL
+        ]
+
+        NotificationCenter.default.post(
+            name: NSNotification.Name("AppleSignInSuccess"),
+            object: nil,
+            userInfo: userInfo
+        )
     }
 
     deinit {
