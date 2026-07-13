@@ -46,7 +46,7 @@ En tu módulo `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.github.BonyGoD:signin-kmp:2.0.0")
+    implementation("com.github.BonyGoD:signin-kmp:2.0.1")
 }
 ```
 
@@ -98,6 +98,34 @@ dependencies {
 
 2. Configura Firebase en tu proyecto Android siguiendo la [documentación oficial](https://firebase.google.com/docs/android/setup)
 
+3. Registra el `CLIENT_ID` (Web Client ID de Firebase/Google Cloud) en tu módulo Koin:
+
+```kotlin
+// En tu módulo Koin (Application o donde inicialices Koin)
+val authModule = module {
+    single(named("CLIENT_ID")) { "TU_WEB_CLIENT_ID_DE_FIREBASE.apps.googleusercontent.com" }
+}
+```
+
+> El **Web Client ID** lo encuentras en Firebase Console → Autenticación → Método de inicio de sesión → Google → ID de cliente web.
+
+#### Requisitos del dispositivo
+
+- Google Play Services instalado y actualizado
+- Al menos una cuenta Google configurada en **Ajustes → Cuentas**
+
+#### Troubleshooting OEM (HyperOS, MIUI, OneUI)
+
+La librería usa una estrategia de dos pasos para maximizar la compatibilidad:
+1. **Primario**: `GetSignInWithGoogleOption` (flujo de botón Google, más robusto en ROMs personalizadas)
+2. **Fallback**: `GetGoogleIdOption` con `filterByAuthorizedAccounts=false` (fuerza el selector completo de cuentas)
+
+Si en un dispositivo HyperOS/MIUI el selector no aparece, comprueba:
+- Que Google Play Services tenga permisos de inicio en segundo plano
+- Que la app no esté en la lista de "optimización de batería" agresiva
+- Que el CLIENT_ID sea el **Web Client ID** (no el Android Client ID)
+- Filtra logcat con el tag `SignInKMP` para ver el paso exacto donde falla
+
 ### iOS
 
 #### Swift Package desde GitHub
@@ -105,7 +133,7 @@ dependencies {
 1. En Xcode, abre tu proyecto
 2. **File → Add Package Dependencies...**
 3. En el campo de búsqueda, pega: `https://github.com/BonyGoD/SignInKMP`
-4. En **"Dependency Rule"**, selecciona **"Exact Version"** y escribe `2.0.0`
+4. En **"Dependency Rule"**, selecciona **"Exact Version"** y escribe `2.0.1`
 5. Click **"Add Package"**
 6. Selecciona **"SignInKMPSwift"** de la lista de productos
 7. Selecciona tu target y click **"Add Package"**
