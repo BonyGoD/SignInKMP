@@ -90,8 +90,7 @@ iosApp/.DS_Store
 iosApp/**/.DS_Store
 project.pbxproj
 
-# Gradle wrapper scripts
-gradlew
+# Gradle wrapper scripts (solo el bat de Windows, el script unix lo necesita JitPack)
 gradlew.bat
 
 # Graphify (artefactos generados, no son código fuente)
