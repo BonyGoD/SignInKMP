@@ -18,9 +18,6 @@ actual fun GoogleSignin(
     onSuccess: (displayName: String, uid: String, email: String, photoUrl: String) -> Unit,
     onError: (errorMessage: String) -> Unit
 ) {
-    // Se pasa LocalContext.current directamente (ContextThemeWrapper en Compose).
-    // El CredentialManager lo necesita tal cual para anclar el bottom sheet
-    // al borde inferior de la pantalla. No usar findActivity() aquí.
     val context = LocalContext.current
     val googleAuthHelper = GoogleAuthHelper(context, CredentialManager.create(context))
 
@@ -34,4 +31,3 @@ actual fun GoogleSignin(
         onError = onError
     )
 }
-
