@@ -7,7 +7,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.credentials.CredentialManager
 import dev.bonygod.signin.kmp.core.GoogleAuthHelper
-import dev.bonygod.signin.kmp.core.findActivity
 import dev.bonygod.signin.kmp.ui.components.GoogleButton
 
 @Composable
@@ -19,12 +18,11 @@ actual fun GoogleSignin(
     onSuccess: (displayName: String, uid: String, email: String, photoUrl: String) -> Unit,
     onError: (errorMessage: String) -> Unit
 ) {
-    // LocalContext.current en Compose es la Activity que aloja la pantalla.
-    // GoogleAuthHelper.findActivity() sube la cadena ContextWrapper por si acaso
-    // el contexto llegara envuelto (p.ej. ContextThemeWrapper en algunos OEMs).
+    // Se pasa LocalContext.current directamente (ContextThemeWrapper en Compose).
+    // El CredentialManager lo necesita tal cual para anclar el bottom sheet
+    // al borde inferior de la pantalla. No usar findActivity() aquí.
     val context = LocalContext.current
-    val activity = context.findActivity() ?: context
-    val googleAuthHelper = GoogleAuthHelper(activity, CredentialManager.create(activity))
+    val googleAuthHelper = GoogleAuthHelper(context, CredentialManager.create(context))
 
     GoogleButton(
         googleAuthHelper = googleAuthHelper,

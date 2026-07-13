@@ -43,9 +43,12 @@ actual class GoogleAuthHelper(
             return
         }
 
-        // ── 2. Resolver Activity desde el contexto ─────────────────────────────
-        val activity = context.findActivity()
-        if (activity == null) {
+        // ── 2. Verificar Activity en la cadena de contexto ────────────────────
+        //    Solo usamos findActivity() como guard de seguridad.
+        //    Para getCredential() pasamos siempre el context original (LocalContext.current)
+        //    que en Compose es un ContextThemeWrapper: el CredentialManager lo necesita
+        //    para anclar el bottom sheet al borde inferior de la pantalla correctamente.
+        if (context.findActivity() == null) {
             Log.e(TAG, "No se encontró una Activity en la cadena del contexto. " +
                     "Asegúrate de que GoogleSignin() se usa dentro de una Activity/ComposeActivity.")
             onError("Google Sign-In requiere un contexto de Activity. " +
@@ -68,7 +71,7 @@ actual class GoogleAuthHelper(
             val request = GetCredentialRequest.Builder()
                 .addCredentialOption(googleIdOption)
                 .build()
-            val result = credentialManager.getCredential(activity, request)
+            val result = credentialManager.getCredential(context, request)
             processCredential(result.credential, onSuccess, onError)
             return
         } catch (e: GetCredentialCancellationException) {
@@ -95,7 +98,7 @@ actual class GoogleAuthHelper(
             val request = GetCredentialRequest.Builder()
                 .addCredentialOption(siwgOption)
                 .build()
-            val result = credentialManager.getCredential(activity, request)
+            val result = credentialManager.getCredential(context, request)
             processCredential(result.credential, onSuccess, onError)
         } catch (e: GetCredentialCancellationException) {
             Log.i(TAG, "El usuario canceló el selector de cuentas (fallback).")
