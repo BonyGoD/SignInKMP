@@ -53,42 +53,13 @@ actual class GoogleAuthHelper(
             return
         }
 
-        // ── 3. Intento principal: GetSignInWithGoogleOption ────────────────────
-        //    Flujo de botón "Sign In with Google" — más robusto en OEMs / HyperOS
-        //    porque omite la capa One Tap y lanza el selector de cuentas directamente.
+        // ── 3. Intento principal: GetGoogleIdOption ────────────────────────────
+        //    Muestra el bottom sheet nativo deslizándose desde la parte inferior
+        //    de la pantalla — UX estándar en la mayoría de dispositivos Android.
+        //    setFilterByAuthorizedAccounts(false) fuerza el selector completo de
+        //    cuentas en lugar de solo las ya autorizadas.
         try {
-            Log.d(TAG, "Intentando Sign In with Google Option (SIWG)…")
-            val siwgOption = GetSignInWithGoogleOption.Builder(clientId).build()
-            val request = GetCredentialRequest.Builder()
-                .addCredentialOption(siwgOption)
-                .build()
-            val result = credentialManager.getCredential(activity, request)
-            processCredential(result.credential, onSuccess, onError)
-            return
-        } catch (e: GetCredentialCancellationException) {
-            Log.i(TAG, "El usuario canceló el selector de cuentas (SIWG).")
-            onError("SignIn_Cancelled: El usuario cerró el selector de cuentas.")
-            return
-        } catch (e: GetCredentialProviderConfigurationException) {
-            Log.w(TAG, "SIWG: error de configuración de proveedor [${e::class.simpleName}]: ${e.message}. " +
-                    "Pasando al fallback GetGoogleIdOption…")
-            // fall-through al Step 4
-        } catch (e: GetCredentialException) {
-            Log.w(TAG, "SIWG: GetCredentialException [${e::class.simpleName}]: ${e.message}. " +
-                    "Pasando al fallback GetGoogleIdOption…")
-            // fall-through al Step 4
-        } catch (e: Exception) {
-            Log.w(TAG, "SIWG: error inesperado [${e::class.simpleName}]: ${e.message}. " +
-                    "Pasando al fallback GetGoogleIdOption…")
-            // fall-through al Step 4
-        }
-
-        // ── 4. Fallback: GetGoogleIdOption ─────────────────────────────────────
-        //    Compatible con más combinaciones de Play Services / OEM.
-        //    setFilterByAuthorizedAccounts(false) fuerza el selector completo de cuentas,
-        //    clave para HyperOS que reporta "sin cuentas autorizadas" con filtro activado.
-        try {
-            Log.d(TAG, "Intentando fallback GetGoogleIdOption…")
+            Log.d(TAG, "Intentando GetGoogleIdOption (bottom sheet nativo)…")
             val googleIdOption = GetGoogleIdOption.Builder()
                 .setServerClientId(clientId)
                 .setFilterByAuthorizedAccounts(false)
@@ -96,6 +67,33 @@ actual class GoogleAuthHelper(
                 .build()
             val request = GetCredentialRequest.Builder()
                 .addCredentialOption(googleIdOption)
+                .build()
+            val result = credentialManager.getCredential(activity, request)
+            processCredential(result.credential, onSuccess, onError)
+            return
+        } catch (e: GetCredentialCancellationException) {
+            Log.i(TAG, "El usuario canceló el selector de cuentas.")
+            onError("SignIn_Cancelled: El usuario cerró el selector de cuentas.")
+            return
+        } catch (e: GetCredentialException) {
+            Log.w(TAG, "GetGoogleIdOption falló [${e::class.simpleName}]: ${e.message}. " +
+                    "Pasando al fallback GetSignInWithGoogleOption (HyperOS/OEM)…")
+            // fall-through al Step 4
+        } catch (e: Exception) {
+            Log.w(TAG, "GetGoogleIdOption error inesperado [${e::class.simpleName}]: ${e.message}. " +
+                    "Pasando al fallback GetSignInWithGoogleOption (HyperOS/OEM)…")
+            // fall-through al Step 4
+        }
+
+        // ── 4. Fallback: GetSignInWithGoogleOption ─────────────────────────────
+        //    Flujo alternativo para OEMs (HyperOS, MIUI) donde GetGoogleIdOption
+        //    falla porque el sistema reporta "sin cuentas autorizadas".
+        //    Este flujo omite esa capa y fuerza el selector de cuentas del sistema.
+        try {
+            Log.d(TAG, "Intentando fallback GetSignInWithGoogleOption (OEM/HyperOS)…")
+            val siwgOption = GetSignInWithGoogleOption.Builder(clientId).build()
+            val request = GetCredentialRequest.Builder()
+                .addCredentialOption(siwgOption)
                 .build()
             val result = credentialManager.getCredential(activity, request)
             processCredential(result.credential, onSuccess, onError)
