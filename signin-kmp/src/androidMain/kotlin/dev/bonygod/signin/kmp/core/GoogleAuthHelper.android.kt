@@ -100,8 +100,10 @@ actual class GoogleAuthHelper(
             processCredential(result.credential, onSuccess, onError)
 
         } catch (e: GetCredentialCancellationException) {
-            Log.i(TAG, "Usuario canceló el selector de cuentas (fallback OEM).")
-            onError("SignIn_Cancelled")
+            // Usamos un código distinto para que el composable sepa que fue el
+            // fallback OEM quien falló (HyperOS lo cancela), no el usuario.
+            Log.w(TAG, "SIWG cancelado en fallback OEM. Activando legacy GoogleSignIn…")
+            onError("SignIn_OEM_Cancelled")
 
         } catch (e: NoCredentialException) {
             Log.e(TAG, "NoCredentialException en fallback OEM: ${e.message}")
