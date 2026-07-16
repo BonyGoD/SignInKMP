@@ -10,10 +10,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,26 +33,18 @@ fun GoogleButton(
 ) {
 
     val scope = rememberCoroutineScope()
-    var isSigningIn by remember { mutableStateOf(false) }
 
     Button(
         modifier = modifier,
-        enabled = !isSigningIn,
         onClick = {
-            if (isSigningIn) return@Button
-            isSigningIn = true
             scope.launch {
-                try {
-                    googleAuthHelper.signInWithGoogle(
-                        onSuccess = { displayName, uid, email, photoUrl ->
-                            onSuccess(displayName, uid, email, photoUrl)
-                        },
-                        onError = { errorMsg ->
-                            onError(errorMsg)
-                        })
-                } finally {
-                    isSigningIn = false
-                }
+                googleAuthHelper.signInWithGoogle(
+                    onSuccess = { displayName, uid, email, photoUrl ->
+                        onSuccess(displayName, uid, email, photoUrl)
+                    },
+                    onError = { errorMsg ->
+                        onError(errorMsg)
+                    })
             }
         },
         colors = ButtonDefaults.buttonColors(
