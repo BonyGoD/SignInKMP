@@ -1,6 +1,7 @@
 package dev.bonygod.signin.kmp.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -19,7 +20,10 @@ actual fun GoogleSignin(
     onError: (errorMessage: String) -> Unit
 ) {
     val context = LocalContext.current
-    val googleAuthHelper = GoogleAuthHelper(context, CredentialManager.create(context))
+    // remember evita recrear el helper y el CredentialManager en cada recomposición
+    val googleAuthHelper = remember(context) {
+        GoogleAuthHelper(context, CredentialManager.create(context))
+    }
 
     GoogleButton(
         googleAuthHelper = googleAuthHelper,

@@ -34,6 +34,11 @@ actual class GoogleAuthHelper(
         // CLIENT_ID idéntico a v2.0.0 — inyección directa desde Koin
         val clientId: String by inject(named("CLIENT_ID"))
 
+        // CredentialManager requiere un Activity context para poder mostrar UI.
+        // LocalContext.current puede devolver un ContextThemeWrapper en vez de la Activity
+        // directamente, lo que en builds release provoca que el flujo se cancele en OEM/HyperOS.
+        val activityContext = context.findActivity() ?: context
+
         // ── Intento principal: GetGoogleIdOption ───────────────────────────────
         // Idéntico a v2.0.0. Muestra el bottom sheet desde la parte inferior.
         try {
@@ -47,7 +52,7 @@ actual class GoogleAuthHelper(
                 .addCredentialOption(googleIdOption)
                 .build()
 
-            val result = credentialManager.getCredential(context, request)
+            val result = credentialManager.getCredential(activityContext, request)
             processCredential(result.credential, onSuccess, onError)
 
         } catch (e: GetCredentialCancellationException) {
@@ -84,13 +89,14 @@ actual class GoogleAuthHelper(
         onSuccess: (String, String, String, String) -> Unit,
         onError: (String) -> Unit
     ) {
+        val activityContext = context.findActivity() ?: context
         try {
             val siwgOption = GetSignInWithGoogleOption.Builder(clientId).build()
             val request = GetCredentialRequest.Builder()
                 .addCredentialOption(siwgOption)
                 .build()
 
-            val result = credentialManager.getCredential(context, request)
+            val result = credentialManager.getCredential(activityContext, request)
             processCredential(result.credential, onSuccess, onError)
 
         } catch (e: GetCredentialCancellationException) {
